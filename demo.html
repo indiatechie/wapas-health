@@ -34,9 +34,13 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: 'DM Sans', sans-serif;
-  height: 100vh;
+  min-height: 100vh;
   width: 100vw;
   overflow: hidden;
+}
+
+@media (max-width: 800px) {
+  body { overflow-y: auto; height: auto; }
 }
 
 .app {
@@ -444,19 +448,51 @@ body {
 
 /* ─── RESPONSIVE ─── */
 @media (max-width: 800px) {
-  .app { flex-direction: column; }
-  .narrative { width: 100%; min-width: unset; padding: 20px 20px 12px; }
+  .app { flex-direction: column; height: auto; min-height: 100vh; }
+
+  /* ── Narrative: compact strip at top ── */
+  .narrative {
+    width: 100%; min-width: unset;
+    padding: 16px 16px 12px;
+    justify-content: flex-start;
+    background: var(--bg);
+  }
   .narrative::after { display: none; }
+
+  /* Hide long description text on mobile — keep title + stat + buttons */
+  .narr-slide p { display: none; }
+  .narr-slide p[style] { display: none; }
+
   .narr-content { min-height: auto; position: relative; }
   .narr-slide { position: relative; display: none; }
   .narr-slide.active { display: block; }
-  .phone-area { padding: 0 12px 12px; flex: 1; }
-  .phone { height: 100%; max-height: 480px; border-radius: 28px; }
-  .phone::before { height: 22px; width: 90px; }
-  .narr-nav { margin-top: 16px; }
-  .narr-stat .num { font-size: 22px; }
-  .success-overlay { border-radius: 28px; }
-  .step-indicator { margin-bottom: 16px; }
+
+  .narr-badge { font-size: 10px; padding: 4px 10px; margin-bottom: 10px; }
+  .narr-slide h2 { font-size: 20px; margin-bottom: 8px; }
+  .narr-stat { padding: 8px 14px; margin-top: 8px; }
+  .narr-stat .num { font-size: 20px; }
+  .narr-stat .label { font-size: 12px; }
+
+  .step-indicator { margin-bottom: 10px; gap: 4px; }
+  .step-pip { width: 24px; height: 3px; }
+  .step-pip.active { width: 36px; }
+
+  .narr-nav { margin-top: 10px; gap: 8px; }
+  .narr-btn { padding: 10px 20px; font-size: 13px; }
+  .autoplay-btn { width: 34px; height: 34px; font-size: 12px; }
+
+  /* ── Phone: takes the bulk of space ── */
+  .phone-area { padding: 0 12px 16px; flex: none; }
+  .phone-wrap { width: 100%; display: flex; justify-content: center; }
+  .phone {
+    width: 100%; max-width: 360px;
+    height: 420px; max-height: 420px;
+    border-radius: 24px;
+    animation: none; /* disable float on mobile */
+  }
+  .phone::before { height: 20px; width: 80px; }
+  .success-overlay { border-radius: 24px; }
+  .phone-glow-ring { border-radius: 30px; }
 }
 </style>
 </head>
