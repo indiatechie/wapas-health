@@ -1,0 +1,16 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 60">
+  <style>
+    .word { font-family: Inter, Arial, sans-serif; font-weight:600; font-size:40px; fill:#1a4a2e;}
+  </style>
+  <path d="M20 45 L30 20 L40 28" stroke="#d4ede0" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="10" y="45" class="word">Wapas</text>
+  <path d="M195 35
+           C195 25 205 22 210 26
+           C215 22 225 25 225 35
+           C225 42 220 48 215 48
+           C212 48 210 44 210 44
+           C210 44 208 48 205 48
+           C200 48 195 42 195 35Z"
+        fill="#d4ede0"/>
+</svg>
