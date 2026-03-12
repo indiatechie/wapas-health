@@ -85,7 +85,7 @@ body {
 .step-pip.active { background: var(--accent); width: 48px; }
 .step-pip.done { background: rgba(37,211,102,0.4); }
 
-.narr-content { position: relative; min-height: 300px; }
+.narr-content { position: relative; min-height: 380px; }
 
 .narr-slide {
   position: absolute; inset: 0;
@@ -174,7 +174,7 @@ body {
 
 .phone {
   width: 375px; max-width: 90%;
-  height: min(720px, 88vh);
+  height: min(780px, 92vh);
   background: var(--wa-dark);
   border-radius: 40px; overflow: hidden;
   box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 25px 60px rgba(0,0,0,0.5), 0 0 120px rgba(37,211,102,0.04);
@@ -746,7 +746,7 @@ const STEPS = [
     messages: [
       { side: 'day', text: 'MONDAY' },
       { side: 'in', delay: 300, time: '9:00 AM', html: `<div style="font-weight:600;margin-bottom:6px">📋 Weekly Follow-Up List</div><div style="font-size:12px;color:#8696a0">Dr. Sharma's Dental Clinic · Mon 9 AM</div>` },
-      { side: 'in', delay: 900, time: '9:00 AM', html: `
+      { side: 'in', delay: 900, time: '9:00 AM', scrollToTop: true, html: `
         <div class="patient-card"><div class="pc-name">1. Priya Mehta</div><div class="pc-detail">Root canal · 8 months ago · No return</div><div class="pc-revenue">Est. revenue: ₹4,500</div></div>
         <div class="patient-card"><div class="pc-name">2. Rajan Kumar</div><div class="pc-detail">Cleaning due · 7 months overdue</div><div class="pc-revenue">Est. revenue: ₹1,200</div></div>
         <div class="patient-card"><div class="pc-name">3. Anita Joshi</div><div class="pc-detail">Missed appt · 12 days ago</div><div class="pc-revenue">Needs rescheduling</div></div>
@@ -969,7 +969,11 @@ async function go(n) {
       waBody.appendChild(el);
       await wait(30);
       el.classList.add('show');
-      waBody.scrollTop = waBody.scrollHeight;
+      if (msg.scrollToTop) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else {
+        waBody.scrollTop = waBody.scrollHeight;
+      }
 
       // Glow on each new message
       glowPhone(msg.side === 'in' ? 'blue' : 'green');
