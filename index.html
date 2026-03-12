@@ -178,20 +178,42 @@
     .reg-check { color: var(--forest-light); font-size: 14px; flex-shrink: 0; margin-top: 1px; font-weight: 700; }
     .reg-item strong { color: var(--ink-mid); display: block; margin-bottom: 3px; font-size: 13px; }
 
-    /* VISION */
-    #vision { background: var(--warm); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-    .vision-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; max-width: 1200px; }
-    .vision-verticals { display: flex; flex-direction: column; gap: 10px; margin-top: 32px; }
-    .vision-v { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: var(--white); border: 1px solid var(--border); border-radius: 12px; font-size: 14px; font-weight: 500; color: var(--ink-mid); transition: all 0.2s; }
-    .vision-v:hover { border-color: var(--forest); color: var(--forest); transform: translateX(4px); }
-    .vision-v .v-tag { margin-left: auto; font-size: 11px; font-weight: 600; color: var(--forest-light); background: var(--mint-pale); padding: 3px 10px; border-radius: 100px; }
-    .vision-stats { display: flex; flex-direction: column; gap: 20px; }
-    .v-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
-    .v-num { font-family: 'Cormorant Garamond', serif; font-size: 48px; font-weight: 600; color: var(--forest); line-height: 1; margin-bottom: 6px; }
-    .v-label { font-size: 14px; color: var(--muted); line-height: 1.55; }
-    .v-fintech { background: var(--ink); color: #fff; border-radius: 16px; padding: 28px; }
-    .v-fintech h4 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; margin-bottom: 10px; }
-    .v-fintech p { font-size: 13px; color: #6b7a72; line-height: 1.65; }
+    /* PATIENT VIEW */
+    #patient-view { background: var(--warm); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .pv-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; max-width: 1200px; }
+    .pv-concerns { display: flex; flex-direction: column; gap: 12px; margin-top: 32px; }
+    .pv-concern { display: flex; gap: 14px; align-items: flex-start; padding: 16px 18px; background: var(--white); border: 1px solid var(--border); border-radius: 12px; font-size: 14px; color: var(--muted); line-height: 1.6; transition: all 0.2s; }
+    .pv-concern:hover { border-color: var(--forest-light); background: var(--mint-pale); }
+    .pv-concern-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+    .pv-concern strong { display: block; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+
+    /* WhatsApp phone mockup */
+    .wa-phone { background: #fff; border-radius: 36px; box-shadow: 0 32px 80px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.06); overflow: hidden; max-width: 320px; margin: 0 auto; }
+    .wa-status-bar { background: #075e54; padding: 8px 20px 4px; display: flex; justify-content: space-between; align-items: center; }
+    .wa-status-bar span { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.9); }
+    .wa-header { background: #075e54; padding: 10px 16px 12px; display: flex; align-items: center; gap: 12px; }
+    .wa-avatar { width: 36px; height: 36px; border-radius: 50%; background: #25d366; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .wa-clinic-info { flex: 1; }
+    .wa-clinic-name { font-size: 14px; font-weight: 600; color: #fff; line-height: 1.2; }
+    .wa-clinic-sub { font-size: 11px; color: rgba(255,255,255,0.65); }
+    .wa-body { background: #e5ddd5; padding: 12px; display: flex; flex-direction: column; gap: 8px; min-height: 360px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' opacity='0.04'%3E%3Ctext x='50%25' y='50%25' font-size='80' text-anchor='middle' dominant-baseline='middle'%3E💬%3C/text%3E%3C/svg%3E"); }
+    .wa-msg { max-width: 82%; padding: 8px 10px 6px; border-radius: 8px; font-size: 13px; line-height: 1.55; position: relative; }
+    .wa-msg-in { background: #fff; align-self: flex-start; border-radius: 0 8px 8px 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+    .wa-msg-out { background: #dcf8c6; align-self: flex-end; border-radius: 8px 8px 0 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+    .wa-msg-time { font-size: 10px; color: #999; text-align: right; margin-top: 3px; }
+    .wa-msg-out .wa-msg-time { color: #7cb57e; }
+    .wa-typing { background: #fff; align-self: flex-start; border-radius: 0 8px 8px 8px; padding: 10px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); display: flex; gap: 4px; align-items: center; }
+    .wa-dot { width: 7px; height: 7px; border-radius: 50%; background: #aaa; animation: waDot 1.2s ease-in-out infinite; }
+    .wa-dot:nth-child(2) { animation-delay: 0.2s; }
+    .wa-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes waDot { 0%,60%,100%{transform:translateY(0);background:#aaa} 30%{transform:translateY(-5px);background:#777} }
+    .wa-date-divider { text-align: center; margin: 4px 0; }
+    .wa-date-divider span { font-size: 11px; color: #666; background: rgba(255,255,255,0.7); padding: 3px 10px; border-radius: 8px; }
+
+    @media (max-width: 960px) {
+      .pv-layout { grid-template-columns: 1fr; gap: 48px; }
+      .wa-phone { max-width: 280px; }
+    }
 
     /* CTA */
     #cta { background: var(--forest); padding: 96px 56px; }
@@ -474,29 +496,75 @@
   </div>
 </section>
 
-<!-- VISION -->
-<section id="vision">
-  <div class="section-label reveal">The Bigger Picture</div>
-  <div class="vision-layout">
+<!-- WHAT THE PATIENT SEES -->
+<section id="patient-view">
+  <div class="section-label reveal">What Your Patient Sees</div>
+  <div class="pv-layout">
     <div>
-      <h2 class="section-title reveal">Dental is the<br><em>proof of concept</em></h2>
-      <p class="section-sub reveal">The missed-return problem is not unique to dentistry. Every health and wellness vertical with recurring visits faces the same silent churn. Wapas starts with dental — and scales from there.</p>
-      <div class="vision-verticals reveal">
-        <div class="vision-v"><span>🦷</span> Dental Clinics <span class="v-tag">Now</span></div>
-        <div class="vision-v"><span>🏃</span> Physiotherapy <span class="v-tag">Next</span></div>
-        <div class="vision-v"><span>👁️</span> Eye Clinics <span class="v-tag">Next</span></div>
-        <div class="vision-v"><span>🌿</span> Dermatology <span class="v-tag">Next</span></div>
-        <div class="vision-v"><span>🐾</span> Veterinary Clinics <span class="v-tag">Next</span></div>
-        <div class="vision-v"><span>💆</span> Salons & Wellness <span class="v-tag">Later</span></div>
+      <h2 class="section-title reveal">A message that feels<br><em>like it's from you</em></h2>
+      <p class="section-sub reveal">Every dentist's first concern: "Will my patients think it's spam?" The answer is no — because it isn't. The message is warm, personal, and comes from your clinic's own WhatsApp number.</p>
+      <div class="pv-concerns reveal">
+        <div class="pv-concern">
+          <span class="pv-concern-icon">✍️</span>
+          <div><strong>Written in your voice</strong>Each message is personalised to the patient's last procedure and written to sound like your team — not a call centre.</div>
+        </div>
+        <div class="pv-concern">
+          <span class="pv-concern-icon">🙋</span>
+          <div><strong>Replies are handled for you</strong>If a patient asks a question, Wapas responds conversationally. You only step in when they're ready to book.</div>
+        </div>
+        <div class="pv-concern">
+          <span class="pv-concern-icon">🚫</span>
+          <div><strong>One message, not a campaign</strong>Each patient gets one thoughtful follow-up — never repeated nudges or bulk blasts. Your patient relationships stay intact.</div>
+        </div>
       </div>
     </div>
-    <div class="vision-stats">
-      <div class="v-card reveal reveal-d1"><div class="v-num">2.5L</div><div class="v-label">dental clinics in India. 70,000 are independent, urban, and reachable today.</div></div>
-      <div class="v-card reveal reveal-d2"><div class="v-num">₹84Cr</div><div class="v-label">ARR potential from dental alone at 6% adoption — before expansion to other verticals.</div></div>
-      <div class="v-card reveal reveal-d3"><div class="v-num">₹0</div><div class="v-label">new data entry required. Works with whatever clinic software or Excel records you already have.</div></div>
-      <div class="v-card reveal reveal-d4" style="background:var(--ink);border-color:#1e2a24;">
-        <div class="v-num" style="font-size:36px;color:#3d9162;">WhatsApp-native</div>
-        <div class="v-label" style="color:#6b7a72;">No app for your patients to download. No portal to log in to. Booking happens inside the conversation they're already in.</div>
+
+    <!-- WhatsApp Phone Mockup -->
+    <div class="reveal reveal-d2">
+      <div class="wa-phone">
+        <div class="wa-status-bar">
+          <span>9:41</span>
+          <span>▐▐▐ ▼ 🔋</span>
+        </div>
+        <div class="wa-header">
+          <div class="wa-avatar">🦷</div>
+          <div class="wa-clinic-info">
+            <div class="wa-clinic-name">Smile Studio Dental</div>
+            <div class="wa-clinic-sub">typically replies within minutes</div>
+          </div>
+        </div>
+        <div class="wa-body">
+          <div class="wa-date-divider"><span>Today</span></div>
+
+          <div class="wa-msg wa-msg-in">
+            Hi Priya 👋 This is Dr. Mehta's team from Smile Studio.<br><br>
+            You had a root canal with us about 6 weeks ago — just checking in to see how you're doing, and whether you'd like to come in for your crown fitting?<br><br>
+            We have slots this week. Would Thursday or Friday work for you?
+            <div class="wa-msg-time">9:41 AM</div>
+          </div>
+
+          <div class="wa-msg wa-msg-out">
+            Oh yes, I kept meaning to call! Thursday works 🙂
+            <div class="wa-msg-time">9:44 AM ✓✓</div>
+          </div>
+
+          <div class="wa-msg wa-msg-in">
+            Wonderful! I've noted you for Thursday. Dr. Mehta will confirm the exact time by evening — you'll get a reminder the morning of your visit.<br><br>
+            Is there anything you'd like to ask before you come in?
+            <div class="wa-msg-time">9:44 AM</div>
+          </div>
+
+          <div class="wa-msg wa-msg-out">
+            No, all good. Thanks for reaching out!
+            <div class="wa-msg-time">9:45 AM ✓✓</div>
+          </div>
+
+          <div class="wa-typing">
+            <div class="wa-dot"></div>
+            <div class="wa-dot"></div>
+            <div class="wa-dot"></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -527,7 +595,7 @@
     <a href="#how">How it works</a>
     <a href="#demo">Demo</a>
     <a href="#trust">Privacy</a>
-    <a href="#vision">Vision</a>
+    <a href="#patient-view">Patient View</a>
   </div>
   <div class="footer-copy">© 2026 Wapas Health &nbsp;·&nbsp; Bangalore, India</div>
 </footer>
