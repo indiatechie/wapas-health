@@ -507,7 +507,7 @@ body {
     <div class="narr-content">
 
       <div class="narr-slide active" data-step="0">
-        <div class="narr-badge"><span class="pip"></span> Step 1 of 6</div>
+        <div class="narr-badge"><span class="pip"></span> Step 1 of 8</div>
         <h2>Monday Morning,<br>9:00 AM</h2>
         <p>The AI scans all patient records overnight. By the time Dr. Sharma checks WhatsApp, a prioritised follow-up list is waiting — patients ranked by how long they've been gone and revenue at risk.</p>
         <div class="narr-stat">
@@ -517,7 +517,7 @@ body {
       </div>
 
       <div class="narr-slide" data-step="1">
-        <div class="narr-badge"><span class="pip"></span> Step 2 of 6</div>
+        <div class="narr-badge"><span class="pip"></span> Step 2 of 8</div>
         <h2>Receptionist Sends<br>Follow-Up</h2>
         <p>The receptionist picks the top-priority patient — Priya Mehta, root canal 8 months ago, never came back. She taps the AI-drafted message and sends it. Warm, personal, not pushy.</p>
         <div class="narr-stat">
@@ -527,7 +527,7 @@ body {
       </div>
 
       <div class="narr-slide" data-step="2">
-        <div class="narr-badge"><span class="pip"></span> Step 3 of 6</div>
+        <div class="narr-badge"><span class="pip"></span> Step 3 of 8</div>
         <h2>Patient Responds<br>With Questions</h2>
         <p>Priya replies — but she's not ready to book yet. She has concerns: "Will it hurt?" "How much will it cost?" These are the questions that used to go unanswered for days.</p>
         <div class="narr-stat">
@@ -537,24 +537,47 @@ body {
       </div>
 
       <div class="narr-slide" data-step="3">
-        <div class="narr-badge"><span class="pip"></span> Step 4 of 6</div>
+        <div class="narr-badge"><span class="pip"></span> Step 4 of 8</div>
         <h2>Instant, Accurate<br>Answers</h2>
         <p>The AI drafts clear, reassuring answers based on the clinic's actual procedures and pricing. The receptionist reviews and sends in seconds — no guessing, no waiting for the doctor.</p>
         <p style="color: var(--accent); font-size: 13px; font-weight: 500;">Every answer is reviewed by staff before sending.</p>
       </div>
 
       <div class="narr-slide" data-step="4">
-        <div class="narr-badge"><span class="pip"></span> Step 5 of 6</div>
-        <h2>Appointment<br>Booked</h2>
-        <p>Questions answered. Concerns resolved. Priya picks a time slot. Appointment confirmed — right inside WhatsApp. No app download, no portal, no phone tag.</p>
+        <div class="narr-badge"><span class="pip"></span> Step 5 of 8</div>
+        <h2>Slot Offered —<br>Commitment Requested</h2>
+        <p>Priya picks a time. But the booking isn't complete yet. Wapas asks her to reply <strong style="color:var(--accent);font-family:'JetBrains Mono',monospace">CONFIRM</strong> — one deliberate extra step that separates a casual tap from genuine intent.</p>
+        <p style="color: var(--text-dim); font-size: 13px;">This filters out ghost appointments before they happen.</p>
         <div class="narr-stat">
           <span class="num">4 min</span>
-          <span class="label">first message → booking</span>
+          <span class="label">first message → slot offered</span>
         </div>
       </div>
 
       <div class="narr-slide" data-step="5">
-        <div class="narr-badge"><span class="pip"></span> Step 6 of 6</div>
+        <div class="narr-badge"><span class="pip"></span> Step 6 of 8</div>
+        <h2>Committed,<br>Not Just Booked</h2>
+        <p>Priya types CONFIRM. The slot is locked. Her appointment card lands in the chat — not as a passive receipt, but as a commitment she made actively.</p>
+        <p style="color: var(--accent); font-size: 13px; font-weight: 500;">Wapas-booked patients show up 87% of the time. Industry average for reactivated patients: 65%.</p>
+        <div class="narr-stat">
+          <span class="num">87%</span>
+          <span class="label">show rate vs 65% industry avg</span>
+        </div>
+      </div>
+
+      <div class="narr-slide" data-step="6">
+        <div class="narr-badge"><span class="pip"></span> Step 7 of 8</div>
+        <h2>Day-Before<br>Re-Confirmation</h2>
+        <p>Evening before the appointment, Wapas sends an automated reminder. If Priya doesn't reply YES by 8 PM, the slot is released to the next patient on the waitlist — automatically.</p>
+        <p style="color: var(--text-dim); font-size: 13px;">An empty slot with notice is recoverable. A no-show at 11 AM is not.</p>
+        <div class="narr-stat">
+          <span class="num">24 hrs</span>
+          <span class="label">before — automated reminder sent</span>
+        </div>
+      </div>
+
+      <div class="narr-slide" data-step="7">
+        <div class="narr-badge"><span class="pip"></span> Step 8 of 8</div>
         <h2>Revenue Recovered.<br>Patient Retained.</h2>
         <p>One patient back. ₹4,500 recovered. And there are 6 more names on this week's list. This plays out every single Monday — automatically.</p>
         <div class="narr-stat">
@@ -678,7 +701,9 @@ const STAT_VALS = {
   0: { val: 18400, prefix: '₹', suffix: '' },
   2: { val: 73, prefix: '', suffix: '%' },
   4: { val: 4, prefix: '', suffix: ' min' },
-  5: { val: 60, prefix: '', suffix: 'x' },
+  5: { val: 87, prefix: '', suffix: '%' },
+  6: { val: 24, prefix: '', suffix: ' hrs' },
+  7: { val: 60, prefix: '', suffix: 'x' },
 };
 function animateStat(stepIdx) {
   const slide = document.querySelector(`[data-step="${stepIdx}"]`);
@@ -692,7 +717,11 @@ function animateStat(stepIdx) {
     const t = Math.min((now - start) / duration, 1);
     const ease = 1 - Math.pow(1 - t, 3);
     const cur = Math.round(val * ease);
-    numEl.textContent = prefix + (stepIdx === 0 ? '₹' + cur.toLocaleString('en-IN') : cur + suffix);
+    if (stepIdx === 0) {
+      numEl.textContent = '₹' + cur.toLocaleString('en-IN');
+    } else {
+      numEl.textContent = prefix + cur + suffix;
+    }
     if (t < 1) requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
@@ -756,7 +785,7 @@ const STEPS = [
       { side: 'out', delay: 2500, time: '9:15 AM', html: `That sensitivity you mentioned is actually normal for a tooth awaiting its crown — the sooner we place it, the better protected you'll be. Dr. Sharma has your case notes ready! 💪` },
     ]
   },
-  // 4: Booking conversation
+  // 4: Slot offered — ends with CONFIRM prompt (not yet confirmed)
   {
     header: { cls: 'patient', initials: 'PM', name: 'Priya Mehta', status: 'online' },
     clear: false,
@@ -764,12 +793,32 @@ const STEPS = [
       { side: 'in', delay: 500, time: '9:16 AM', html: `Oh makes sense, I didn't realise the crown was the next step! Yes let's do it 👍 What slots do you have this week?` },
       { side: 'out', delay: 1400, time: '9:17 AM', html: `Here are available slots:<br><br>📅 <b>Wed, 19 Mar</b> — 10:30 AM, 3:00 PM<br>📅 <b>Thu, 20 Mar</b> — 11:00 AM, 4:30 PM<br>📅 <b>Sat, 22 Mar</b> — 10:00 AM` },
       { side: 'in', delay: 2400, time: '9:18 AM', html: `Thursday 11 AM works perfectly!` },
-      { side: 'out', delay: 3400, time: '9:18 AM', html: `<div class="appt-card"><div class="check">✅</div><div class="title">Appointment Confirmed</div><div class="detail"><b>Dr. Sharma's Dental Clinic</b><br>Thu, 20 Mar · 11:00 AM<br>Permanent Crown Placement<br>Est. cost: ₹4,500</div></div>` },
-      { side: 'out', delay: 4400, time: '9:19 AM', html: `You're all set, Priya! We'll send a reminder Wednesday evening. See you Thursday! 🦷✨` },
-      { side: 'in', delay: 5200, time: '9:20 AM', html: `Thank you so much Sneha! See you then 😊🙏` },
+      { side: 'out', delay: 3400, time: '9:18 AM', html: `Perfect! To lock in your slot, please reply <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:#25D366;letter-spacing:1px">CONFIRM</span> below ⏳<br><br><span style="font-size:12px;color:#8696a0">We'll hold Thu 20 Mar · 11:00 AM for 2 hours.</span>` },
     ]
   },
-  // 5: Success overlay
+  // 5: Priya confirms — slot locked, appointment card
+  {
+    header: { cls: 'patient', initials: 'PM', name: 'Priya Mehta', status: 'online' },
+    clear: false,
+    messages: [
+      { side: 'in', delay: 600, time: '9:19 AM', html: `<span style="font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:#25D366;letter-spacing:1.5px">CONFIRM</span>` },
+      { side: 'out', delay: 1800, time: '9:19 AM', html: `<div class="appt-card"><div class="check">✅</div><div style="display:inline-flex;align-items:center;gap:5px;background:rgba(37,211,102,0.15);border:1px solid rgba(37,211,102,0.3);border-radius:999px;padding:3px 10px;font-size:10px;font-weight:600;color:#25D366;margin:4px 0;letter-spacing:0.5px">⚡ Smart Booking</div><div class="title" style="margin-top:4px">Appointment Locked In</div><div class="detail"><b>Dr. Sharma's Dental Clinic</b><br>Thu, 20 Mar · 11:00 AM<br>Permanent Crown Placement<br>Est. cost: ₹4,500</div></div>` },
+      { side: 'out', delay: 3000, time: '9:20 AM', html: `Slot locked, Priya! 🦷✨ We'll send a reminder Wednesday evening — just reply YES to confirm or RESCHEDULE if plans change.` },
+      { side: 'in', delay: 4000, time: '9:20 AM', html: `Thank you so much Sneha! See you then 😊🙏` },
+    ]
+  },
+  // 6: Day-before reminder — Wednesday evening
+  {
+    header: { cls: 'patient', initials: 'PM', name: 'Priya Mehta', status: 'last seen today at 6:01 PM' },
+    clear: false,
+    messages: [
+      { side: 'day', text: 'WEDNESDAY EVENING' },
+      { side: 'out', delay: 500, time: '6:00 PM', html: `Hi Priya 👋 Just a reminder — you have an appointment with <b>Dr. Sharma tomorrow at 11:00 AM</b>.<br><br>Reply <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:#25D366">YES</span> to confirm your slot, or <span style="font-family:'JetBrains Mono',monospace;font-weight:600;color:#8696a0">RESCHEDULE</span> if plans have changed.` },
+      { side: 'in', delay: 2000, time: '6:03 PM', html: `YES! See you tomorrow 😊` },
+      { side: 'out', delay: 3200, time: '6:03 PM', html: `Confirmed ✅ Dr. Sharma will see you <b>Thu, 20 Mar at 11:00 AM</b>. Nothing else needed — just show up!<br><br><span style="font-size:12px;color:#8696a0">📍 Dr. Sharma's Dental Clinic, Andheri West</span>` },
+    ]
+  },
+  // 7: Success overlay
   { showOverlay: true }
 ];
 
@@ -785,7 +834,7 @@ let autoPlaying = false;
 let autoPlayTimer = null;
 
 // Step timing for auto-play (ms to wait before advancing after animations finish)
-const STEP_PAUSE = [3000, 4000, 3500, 4000, 6000, 4000];
+const STEP_PAUSE = [3000, 4000, 3500, 4000, 5000, 5500, 5000, 4000];
 
 // Build pips
 const pipsEl = document.getElementById('stepPips');
@@ -878,7 +927,6 @@ async function go(n) {
     await wait(400);
     if (cancelToken !== myToken) return;
     document.getElementById('successOverlay').classList.add('show');
-    // Revenue count-up
     await wait(600);
     if (cancelToken !== myToken) return;
     countUp(document.getElementById('revenueCount'), 0, 4500, '+ ', 1400);
@@ -926,8 +974,8 @@ async function go(n) {
       // Glow on each new message
       glowPhone(msg.side === 'in' ? 'blue' : 'green');
 
-      // Confetti when appointment card appears
-      if (msg.html && msg.html.includes('appt-card')) {
+      // Confetti when appointment card or CONFIRM appears
+      if (msg.html && (msg.html.includes('appt-card') || msg.html.includes('Appointment Locked In'))) {
         await wait(600);
         if (cancelToken !== myToken) { busy = false; return; }
         triggerConfetti();
