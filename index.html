@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wapas.Health — AI that brings patients back to your clinic</title>
+  <meta name="description" content="Wapas automatically detects which dental patients haven't returned, ranks them by revenue at risk, and delivers a prioritised WhatsApp follow-up list every Monday morning." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --forest: #1a4a2e; --forest-mid: #2a6b44; --forest-light: #3d9162;
+      --mint: #d4ede0; --mint-pale: #f0faf4;
+      --ink: #111816; --ink-mid: #2d3730; --muted: #6b7a72;
+      --border: #dde8e2; --white: #fafcfb; --warm: #f7f9f7;
+      --red-soft: #fdf2f2; --red: #c0392b;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--ink); overflow-x: hidden; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-thumb { background: var(--mint); border-radius: 3px; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 56px; height: 64px;
+      background: rgba(250,252,251,0.93); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600;
+      color: var(--forest); text-decoration: none; display: flex; align-items: center; gap: 10px;
+    }
+    .nav-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--forest-light);
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(1.4)} }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a { font-size: 14px; font-weight: 500; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta {
+      background: var(--forest) !important; color: #fff !important;
+      padding: 10px 22px; border-radius: 8px; font-weight: 600 !important;
+      box-shadow: 0 2px 12px rgba(26,74,46,0.22); transition: all 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--forest-mid) !important; transform: translateY(-1px); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+      padding: 100px 56px 64px; position: relative; overflow: hidden;
+    }
+    .hero-grid {
+      position: absolute; inset: 0; z-index: 0;
+      background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 64px 64px; opacity: 0.45;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%);
+    }
+    .hero-glow { position: absolute; top: -10%; right: -5%; width: 680px; height: 680px; background: radial-gradient(ellipse, rgba(61,145,98,0.11) 0%, transparent 70%); z-index: 0; }
+    .hero-glow2 { position: absolute; bottom: -10%; left: -5%; width: 480px; height: 480px; background: radial-gradient(ellipse, rgba(26,74,46,0.05) 0%, transparent 70%); z-index: 0; }
+    .hero-inner { position: relative; z-index: 1; max-width: 920px; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--mint-pale); border: 1px solid var(--mint); color: var(--forest);
+      font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+      padding: 7px 16px; border-radius: 100px; margin-bottom: 36px;
+      opacity: 0; animation: fadeUp 0.6s 0.1s forwards;
+    }
+    .hero-badge span { width: 6px; height: 6px; background: var(--forest-light); border-radius: 50%; animation: pulse 2s infinite; }
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(52px, 7vw, 96px); font-weight: 600;
+      line-height: 1.0; letter-spacing: -2.5px; color: var(--ink);
+      margin-bottom: 32px; opacity: 0; animation: fadeUp 0.7s 0.2s forwards;
+    }
+    .hero h1 em { font-style: italic; color: var(--forest-mid); }
+    .hero-sub {
+      font-size: 19px; font-weight: 300; color: var(--muted);
+      max-width: 580px; line-height: 1.75; margin-bottom: 48px;
+      opacity: 0; animation: fadeUp 0.7s 0.35s forwards;
+    }
+    .hero-actions { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; opacity: 0; animation: fadeUp 0.7s 0.5s forwards; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--forest); color: #fff; padding: 16px 34px;
+      border-radius: 10px; font-size: 16px; font-weight: 600; text-decoration: none;
+      transition: all 0.25s; box-shadow: 0 4px 24px rgba(26,74,46,0.25);
+    }
+    .btn-primary:hover { background: var(--forest-mid); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(26,74,46,0.35); }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--ink-mid); font-size: 15px; font-weight: 500; text-decoration: none;
+      padding: 16px 22px; border: 1px solid var(--border); border-radius: 10px; transition: all 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--forest); color: var(--forest); background: var(--mint-pale); }
+    .hero-stats {
+      display: flex; gap: 0; margin-top: 72px;
+      border-top: 1px solid var(--border);
+      opacity: 0; animation: fadeUp 0.7s 0.65s forwards;
+    }
+    .hero-stat { flex: 1; padding: 32px 48px 0 0; }
+    .hero-stat:not(:first-child) { padding-left: 48px; border-left: 1px solid var(--border); }
+    .hero-stat-num { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-weight: 600; color: var(--forest); line-height: 1; margin-bottom: 6px; }
+    .hero-stat-label { font-size: 13px; color: var(--muted); font-weight: 400; line-height: 1.5; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+
+    /* SECTIONS */
+    section { padding: 96px 56px; }
+    .section-label { font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--forest-light); margin-bottom: 16px; }
+    .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px,4vw,60px); font-weight: 600; letter-spacing: -1.5px; line-height: 1.1; color: var(--ink); margin-bottom: 20px; max-width: 680px; }
+    .section-title em { font-style: italic; color: var(--forest-mid); }
+    .section-sub { font-size: 17px; color: var(--muted); max-width: 560px; line-height: 1.75; font-weight: 300; margin-bottom: 56px; }
+
+    /* PROBLEM */
+    #problem { background: var(--white); }
+    .problem-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; max-width: 1200px; margin-bottom: 56px; }
+    .problem-quote { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-style: italic; line-height: 1.55; color: var(--ink-mid); padding-left: 24px; border-left: 3px solid var(--forest-light); }
+    .problem-body { font-size: 16px; color: var(--muted); line-height: 1.8; font-weight: 300; }
+    .problem-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; max-width: 1200px; }
+    .problem-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 28px; transition: all 0.3s; position: relative; overflow: hidden; }
+    .problem-card::after { content:''; position:absolute; bottom:0; left:0; right:0; height:3px; background: linear-gradient(90deg, var(--forest), var(--forest-light)); transform:scaleX(0); transform-origin:left; transition:transform 0.3s; }
+    .problem-card:hover { border-color: var(--mint); transform: translateY(-4px); box-shadow: 0 16px 48px rgba(26,74,46,0.08); }
+    .problem-card:hover::after { transform: scaleX(1); }
+    .problem-icon { font-size: 26px; margin-bottom: 14px; }
+    .problem-card h4 { font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+    .problem-card p { font-size: 13px; color: var(--muted); line-height: 1.65; }
+    .problem-loss { margin-top: 14px; display: inline-block; font-size: 12px; font-weight: 600; color: var(--red); background: var(--red-soft); padding: 5px 12px; border-radius: 6px; }
+    .problem-total { margin-top: 48px; max-width: 1200px; background: var(--mint-pale); border: 1px solid var(--mint); border-radius: 16px; padding: 32px 40px; display: flex; align-items: center; gap: 32px; }
+    .problem-total-num { font-family: 'Cormorant Garamond', serif; font-size: 52px; font-weight: 600; color: var(--forest); line-height: 1; white-space: nowrap; }
+    .problem-total-text { font-size: 17px; color: var(--ink-mid); line-height: 1.65; }
+    .problem-total-text strong { color: var(--forest); }
+
+    /* HOW IT WORKS */
+    #how { background: var(--ink); }
+    #how .section-label { color: #3d9162; }
+    #how .section-title { color: #fff; }
+    #how .section-sub { color: #6b7a72; }
+    .steps-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 1px; background: #1e2a24; border-radius: 20px; overflow: hidden; max-width: 1200px; }
+    .step { background: #131a16; padding: 40px 26px; transition: background 0.25s; }
+    .step:hover { background: #171f1a; }
+    .step-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; color: #2a4a35; letter-spacing: 1px; margin-bottom: 20px; transition: color 0.25s; }
+    .step:hover .step-num { color: var(--forest-light); }
+    .step-icon { font-size: 22px; margin-bottom: 14px; }
+    .step h4 { font-size: 14px; font-weight: 600; color: #e8ede9; margin-bottom: 10px; line-height: 1.3; }
+    .step p { font-size: 12px; color: #5a6b61; line-height: 1.65; }
+
+    /* DEMO */
+    #demo { background: var(--ink); padding: 0 0 96px; }
+    .demo-header { padding: 96px 56px 48px; }
+    #demo .section-label { color: #3d9162; }
+    #demo .section-title { color: #fff; }
+    #demo .section-sub { color: #6b7a72; }
+    .demo-wrap { max-width: 1200px; margin: 0 56px; border-radius: 24px; overflow: hidden; box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 40px 80px rgba(0,0,0,0.5), 0 0 120px rgba(61,145,98,0.05); }
+    .demo-wrap iframe { width: 100%; height: 680px; border: none; display: block; }
+
+    /* TRUST */
+    #trust { background: var(--white); }
+    .trust-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; max-width: 1200px; }
+    .trust-headline { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 600; line-height: 1.2; letter-spacing: -1px; color: var(--ink); margin-bottom: 20px; }
+    .trust-headline em { font-style: italic; color: var(--forest-mid); }
+    .trust-lead { font-size: 16px; color: var(--muted); line-height: 1.8; font-weight: 300; margin-bottom: 32px; }
+    .trust-stmt { background: var(--mint-pale); border: 1px solid var(--mint); border-left: 4px solid var(--forest); border-radius: 0 12px 12px 0; padding: 18px 22px; margin-bottom: 12px; font-size: 15px; font-weight: 500; color: var(--ink-mid); line-height: 1.5; }
+    .trust-items { display: flex; flex-direction: column; gap: 16px; }
+    .trust-item { display: flex; gap: 16px; align-items: flex-start; padding: 22px; border: 1px solid var(--border); border-radius: 14px; transition: all 0.2s; }
+    .trust-item:hover { border-color: var(--mint); background: var(--mint-pale); transform: translateX(4px); }
+    .trust-icon { width: 40px; height: 40px; background: var(--mint-pale); border: 1px solid var(--mint); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .trust-item h4 { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+    .trust-item p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .reg-box { margin-top: 32px; background: #fafdf9; border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+    .reg-box h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--forest); margin-bottom: 20px; }
+    .reg-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .reg-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .reg-check { color: var(--forest-light); font-size: 14px; flex-shrink: 0; margin-top: 1px; font-weight: 700; }
+    .reg-item strong { color: var(--ink-mid); display: block; margin-bottom: 3px; font-size: 13px; }
+
+    /* VISION */
+    #vision { background: var(--warm); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .vision-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; max-width: 1200px; }
+    .vision-verticals { display: flex; flex-direction: column; gap: 10px; margin-top: 32px; }
+    .vision-v { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: var(--white); border: 1px solid var(--border); border-radius: 12px; font-size: 14px; font-weight: 500; color: var(--ink-mid); transition: all 0.2s; }
+    .vision-v:hover { border-color: var(--forest); color: var(--forest); transform: translateX(4px); }
+    .vision-v .v-tag { margin-left: auto; font-size: 11px; font-weight: 600; color: var(--forest-light); background: var(--mint-pale); padding: 3px 10px; border-radius: 100px; }
+    .vision-stats { display: flex; flex-direction: column; gap: 20px; }
+    .v-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+    .v-num { font-family: 'Cormorant Garamond', serif; font-size: 48px; font-weight: 600; color: var(--forest); line-height: 1; margin-bottom: 6px; }
+    .v-label { font-size: 14px; color: var(--muted); line-height: 1.55; }
+    .v-fintech { background: var(--ink); color: #fff; border-radius: 16px; padding: 28px; }
+    .v-fintech h4 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; margin-bottom: 10px; }
+    .v-fintech p { font-size: 13px; color: #6b7a72; line-height: 1.65; }
+
+    /* CTA */
+    #cta { background: var(--forest); padding: 96px 56px; }
+    .cta-inner { max-width: 600px; margin: 0 auto; text-align: center; }
+    .cta-inner .section-label { color: rgba(255,255,255,0.45); }
+    .cta-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(40px,5vw,64px); font-weight: 600; letter-spacing: -1.5px; line-height: 1.1; color: #fff; margin-bottom: 20px; }
+    .cta-sub { font-size: 17px; color: rgba(255,255,255,0.6); line-height: 1.7; font-weight: 300; margin-bottom: 48px; }
+    .cta-form { display: flex; flex-direction: column; gap: 12px; max-width: 420px; margin: 0 auto; }
+    .cta-input { padding: 16px 18px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.08); color: #fff; font-size: 15px; font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.2s; width: 100%; }
+    .cta-input::placeholder { color: rgba(255,255,255,0.32); }
+    .cta-input:focus { border-color: rgba(255,255,255,0.4); }
+    .cta-btn { padding: 18px; border-radius: 10px; background: #fff; color: var(--forest); font-size: 16px; font-weight: 700; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+    .cta-note { font-size: 12px; color: rgba(255,255,255,0.35); margin-top: 16px; }
+
+    /* FOOTER */
+    footer { background: var(--ink); padding: 40px 56px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+    .footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: #3d9162; text-decoration: none; }
+    .footer-links { display: flex; gap: 28px; }
+    .footer-links a { font-size: 13px; color: #3a4a40; text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: #6b7a72; }
+    .footer-copy { font-size: 12px; color: #2a3a30; }
+
+    /* REVEAL */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-d1 { transition-delay: 0.1s; }
+    .reveal-d2 { transition-delay: 0.2s; }
+    .reveal-d3 { transition-delay: 0.3s; }
+    .reveal-d4 { transition-delay: 0.4s; }
+
+    /* RESPONSIVE */
+    @media (max-width: 960px) {
+      nav { padding: 0 24px; }
+      .nav-links a:not(.nav-cta) { display: none; }
+      section { padding: 64px 24px; }
+      .hero { padding: 88px 24px 48px; }
+      .hero h1 { font-size: clamp(40px, 10vw, 64px); }
+      .hero-stats { flex-direction: column; gap: 24px; }
+      .hero-stat { padding: 0 !important; border-left: none !important; }
+      .problem-intro { grid-template-columns: 1fr; gap: 32px; }
+      .steps-grid { grid-template-columns: 1fr 1fr; }
+      .trust-grid, .vision-layout { grid-template-columns: 1fr; gap: 48px; }
+      .demo-header { padding: 64px 24px 40px; }
+      .demo-wrap { margin: 0 24px; }
+      .demo-wrap iframe { height: 520px; }
+      #cta { padding: 64px 24px; }
+      footer { padding: 40px 24px; flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 600px) {
+      .steps-grid { grid-template-columns: 1fr; }
+      .problem-cards { grid-template-columns: 1fr; }
+      .demo-wrap iframe { height: 420px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo"><span class="nav-dot"></span>Wapas<span style="color:var(--muted);font-weight:300">.health</span></a>
+  <div class="nav-links">
+    <a href="#problem">Problem</a>
+    <a href="#how">How It Works</a>
+    <a href="#demo">Demo</a>
+    <a href="#trust">Privacy</a>
+    <a href="#cta" class="nav-cta">Request Early Access</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-inner">
+    <div class="hero-badge"><span></span> Now in early access &nbsp;·&nbsp; Bangalore, India</div>
+    <h1>AI that brings<br><em>patients back</em><br>to your clinic</h1>
+    <p class="hero-sub">Every dental clinic loses patients silently — not because of bad experiences, but because no one followed up. Wapas detects who should have come back but didn't, and delivers a prioritised WhatsApp action list every Monday morning.</p>
+    <div class="hero-actions">
+      <a href="#cta" class="btn-primary">Request Early Access <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <a href="#demo" class="btn-ghost">Watch the demo <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M6 4l6 4-6 4V4z" fill="currentColor"/></svg></a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num">₹40,000</div><div class="hero-stat-label">lost per month to silent<br>patient churn, per clinic</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">30–50%</div><div class="hero-stat-label">of recommended treatments<br>are never completed</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">Zero</div><div class="hero-stat-label">new tools for your team<br>to learn or manage</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">2.5L</div><div class="hero-stat-label">dental clinics in India<br>facing this problem today</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="section-label reveal">The Problem</div>
+  <div class="problem-intro">
+    <div>
+      <h2 class="section-title reveal">Clinics lose patients<br><em>silently, every month</em></h2>
+      <p class="section-sub reveal">The dentist is focused on the next patient in the chair. The receptionist is managing walk-ins. No one is watching who hasn't come back.</p>
+    </div>
+    <p class="problem-quote reveal reveal-d2">"When a patient doesn't come back after a procedure, do you usually find out why — or do they just disappear?"</p>
+  </div>
+  <div class="problem-cards">
+    <div class="problem-card reveal reveal-d1">
+      <div class="problem-icon">🦷</div>
+      <h4>Missed root canal follow-up</h4>
+      <p>Patient completes root canal but never returns for the crown. Treatment stays incomplete. Revenue lost.</p>
+      <span class="problem-loss">₹3,000–8,000 per patient &nbsp;·&nbsp; 3–5x/month</span>
+    </div>
+    <div class="problem-card reveal reveal-d2">
+      <div class="problem-icon">🪥</div>
+      <h4>6-month cleaning cycle broken</h4>
+      <p>Routine cleaning due every 6 months. Patient doesn't rebook. No one calls. The cycle breaks permanently.</p>
+      <span class="problem-loss">₹800–1,500 per patient &nbsp;·&nbsp; 8–12x/month</span>
+    </div>
+    <div class="problem-card reveal reveal-d3">
+      <div class="problem-icon">📅</div>
+      <h4>Missed appointment not rescheduled</h4>
+      <p>Patient misses an appointment and never hears back. The 48-hour window to recover them closes silently.</p>
+      <span class="problem-loss">₹1,000–3,000 per patient &nbsp;·&nbsp; 5–8x/month</span>
+    </div>
+    <div class="problem-card reveal reveal-d4">
+      <div class="problem-icon">🔧</div>
+      <h4>Orthodontic adjustment overdue</h4>
+      <p>Braces patients need adjustments every 4–6 weeks. Missed sessions disrupt treatment and risk patient dropout.</p>
+      <span class="problem-loss">Treatment disruption + churn &nbsp;·&nbsp; 2–4x/month</span>
+    </div>
+  </div>
+  <div class="problem-total reveal">
+    <div class="problem-total-num">₹15K–40K</div>
+    <p class="problem-total-text">A typical independent clinic loses this <strong>every single month</strong> to silent patient churn. The dentist knows it happens. Until now, no one had given them a simple way to act on it.</p>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-label reveal">How It Works</div>
+  <h2 class="section-title reveal">Five steps.<br><em>Zero new habits.</em></h2>
+  <p class="section-sub reveal">Wapas plugs into what your clinic already uses — your existing clinic software, Excel, or any CSV export. No new software for your receptionist to learn.</p>
+  <div class="steps-grid reveal">
+    <div class="step">
+      <div class="step-num">01 / 05</div>
+      <div class="step-icon">📤</div>
+      <h4>Export from your clinic software</h4>
+      <p>Receptionist exports the patient list from your existing clinic software — or sends a CSV. One action, once a week. Nothing else changes in your workflow.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02 / 05</div>
+      <div class="step-icon">🧠</div>
+      <h4>AI detects overdue patients</h4>
+      <p>Wapas analyses every patient — procedure type, last visit date, expected return window — and ranks by urgency and revenue at risk.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03 / 05</div>
+      <div class="step-icon">✅</div>
+      <h4>You approve who to contact</h4>
+      <p>The dentist gets a prioritised WhatsApp list. Reply YES ALL or YES 1, 2, 3. Every message requires your explicit approval — always.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">04 / 05</div>
+      <div class="step-icon">💬</div>
+      <h4>AI sends personalised messages</h4>
+      <p>Each patient receives a warm, personalised WhatsApp message written in the dentist's own voice — not a generic template. AI handles replies conversationally.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">05 / 05</div>
+      <div class="step-icon">📆</div>
+      <h4>Patient books an appointment</h4>
+      <p>Questions answered. Concerns resolved. Appointment confirmed right inside WhatsApp. No app download, no portal, no phone tag.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section id="demo" style="padding:0;">
+  <div class="demo-header">
+    <div class="section-label reveal">Live Demo</div>
+    <h2 class="section-title reveal">See Wapas in action</h2>
+    <p class="section-sub reveal">Watch a full follow-up flow — from Monday morning list to confirmed appointment. Use the arrows or press Space to step through.</p>
+  </div>
+  <div class="demo-wrap reveal">
+    <iframe src="demo.html" title="Wapas Interactive Demo" loading="lazy"></iframe>
+  </div>
+  <div style="height: 96px;"></div>
+</section>
+
+<!-- TRUST & PRIVACY -->
+<section id="trust">
+  <div class="section-label reveal">Built on Trust</div>
+  <div class="trust-grid">
+    <div>
+      <h2 class="trust-headline reveal">Your patients.<br><em>Your control.</em><br>Always.</h2>
+      <p class="trust-lead reveal">Patient data privacy is not a disclaimer at the bottom of a page. It is the foundation of how Wapas operates. A dentist who shares patient records is trusting us with their most valuable asset — their patient relationships.</p>
+      <div class="trust-stmt reveal">Your patient data never leaves your control.</div>
+      <div class="trust-stmt reveal reveal-d1">Wapas never contacts your patients without your explicit approval.</div>
+      <div class="trust-stmt reveal reveal-d2">No data is sold, shared, or used across clinics — ever.</div>
+
+      <div class="reg-box reveal reveal-d3">
+        <h4>Indian Regulatory Compliance</h4>
+        <div class="reg-item">
+          <span class="reg-check">✓</span>
+          <div><strong>Digital Personal Data Protection (DPDP) Act, 2023</strong>India's primary data protection law. Wapas processes only the minimum patient data required for treatment follow-up. Every patient message includes a STOP opt-out, honouring the right to withdraw consent as required under Section 6 of the DPDP Act.</div>
+        </div>
+        <div class="reg-item">
+          <span class="reg-check">✓</span>
+          <div><strong>IT (Reasonable Security Practices) Rules, 2011</strong>Patient records qualify as Sensitive Personal Data under Rule 3. Wapas maintains per-clinic data silos — no patient from one clinic is ever visible to another — and enforces strict access controls at every layer.</div>
+        </div>
+        <div class="reg-item">
+          <span class="reg-check">✓</span>
+          <div><strong>TCCCP Regulations (Telecom)</strong>All patient communications are initiated only after dentist approval and only to patients with an existing clinical relationship with the clinic. Every message clearly identifies the sending clinic.</div>
+        </div>
+        <div class="reg-item">
+          <span class="reg-check">✓</span>
+          <div><strong>WhatsApp Business API Policy</strong>All outbound patient messages use pre-approved WhatsApp Business API templates. Opt-out is honoured immediately. No unsolicited bulk messaging.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="trust-items">
+      <div class="trust-item reveal reveal-d1">
+        <div class="trust-icon">🔐</div>
+        <div><h4>Explicit approval before every message</h4><p>The dentist reviews and approves every patient outreach. Wapas never sends anything without a direct YES from the clinic owner. This is not just a feature — it is the privacy architecture made visible.</p></div>
+      </div>
+      <div class="trust-item reveal reveal-d2">
+        <div class="trust-icon">🏥</div>
+        <div><h4>Complete data isolation between clinics</h4><p>Dr. Sharma's patient records are never visible to any other Wapas account — ever. Each clinic is a fully isolated data environment. Shared infrastructure, zero data sharing.</p></div>
+      </div>
+      <div class="trust-item reveal reveal-d3">
+        <div class="trust-icon">📵</div>
+        <div><h4>STOP opt-out in every message</h4><p>Every patient message includes a clear opt-out instruction. Replies of STOP are processed immediately and that patient is never contacted again — compliant with DPDP Act 2023 consent withdrawal requirements.</p></div>
+      </div>
+      <div class="trust-item reveal reveal-d4">
+        <div class="trust-icon">📋</div>
+        <div><h4>Minimum data principle</h4><p>Wapas reads only four fields — name, phone number, procedure type, and last visit date. No billing data, no medical notes, no insurance information. We take only what is needed.</p></div>
+      </div>
+      <div class="trust-item reveal">
+        <div class="trust-icon">🎯</div>
+        <div><h4>Purpose limitation</h4><p>Patient data collected via Wapas is used exclusively for treatment follow-up communication with that clinic's own patients. Never used for marketing, analytics, or any secondary purpose.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VISION -->
+<section id="vision">
+  <div class="section-label reveal">The Bigger Picture</div>
+  <div class="vision-layout">
+    <div>
+      <h2 class="section-title reveal">Dental is the<br><em>proof of concept</em></h2>
+      <p class="section-sub reveal">The missed-return problem is not unique to dentistry. Every health and wellness vertical with recurring visits faces the same silent churn. Wapas starts with dental — and scales from there.</p>
+      <div class="vision-verticals reveal">
+        <div class="vision-v"><span>🦷</span> Dental Clinics <span class="v-tag">Now</span></div>
+        <div class="vision-v"><span>🏃</span> Physiotherapy <span class="v-tag">Next</span></div>
+        <div class="vision-v"><span>👁️</span> Eye Clinics <span class="v-tag">Next</span></div>
+        <div class="vision-v"><span>🌿</span> Dermatology <span class="v-tag">Next</span></div>
+        <div class="vision-v"><span>🐾</span> Veterinary Clinics <span class="v-tag">Next</span></div>
+        <div class="vision-v"><span>💆</span> Salons & Wellness <span class="v-tag">Later</span></div>
+      </div>
+    </div>
+    <div class="vision-stats">
+      <div class="v-card reveal reveal-d1"><div class="v-num">2.5L</div><div class="v-label">dental clinics in India. 70,000 are independent, urban, and reachable today.</div></div>
+      <div class="v-card reveal reveal-d2"><div class="v-num">₹84Cr</div><div class="v-label">ARR potential from dental alone at 6% adoption — before expansion to other verticals.</div></div>
+      <div class="v-card reveal reveal-d3"><div class="v-num">₹0</div><div class="v-label">new data entry required. Works with whatever clinic software or Excel records you already have.</div></div>
+      <div class="v-fintech reveal reveal-d4">
+        <h4>The Fintech Layer</h4>
+        <p>At 3,000+ clinics, Wapas becomes a lending platform — offering working capital to clinic owners against their predictable, Wapas-verified monthly recovery revenue. The BharatPe playbook, applied to healthcare.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-inner">
+    <div class="section-label">Early Access</div>
+    <h2 class="cta-title">Start recovering your patients this Monday</h2>
+    <p class="cta-sub">We're onboarding a small number of dental clinics in Bangalore for our early access programme. No commitment, no complex setup — just results.</p>
+    <form class="cta-form" onsubmit="handleSubmit(event)">
+      <input class="cta-input" type="text" placeholder="Your name" required />
+      <input class="cta-input" type="text" placeholder="Clinic name" required />
+      <input class="cta-input" type="tel" placeholder="WhatsApp number" required />
+      <input class="cta-input" type="email" placeholder="Email address" required />
+      <button class="cta-btn" type="submit" id="submitBtn">Request Early Access →</button>
+    </form>
+    <p class="cta-note">We'll reach out on WhatsApp within 24 hours. No spam, ever.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#" class="footer-logo">Wapas.health</a>
+  <div class="footer-links">
+    <a href="#problem">Problem</a>
+    <a href="#how">How it works</a>
+    <a href="#demo">Demo</a>
+    <a href="#trust">Privacy</a>
+    <a href="#vision">Vision</a>
+  </div>
+  <div class="footer-copy">© 2025 Wapas Health &nbsp;·&nbsp; Bangalore, India</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Form submit
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.textContent = '✓ Request received — we\'ll be in touch on WhatsApp!';
+    btn.style.background = '#d4ede0';
+    btn.style.color = '#1a4a2e';
+    btn.disabled = true;
+  }
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
+  });
+</script>
+</body>
+</html>

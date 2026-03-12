@@ -1,0 +1,8 @@
+# Claude config
+.claude/
+
+# Sensitive / binary docs files
+docs/patients.csv
+docs/files/
+docs/files.zip
+docs/*.docx

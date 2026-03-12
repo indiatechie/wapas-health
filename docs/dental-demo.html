@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wapas Health — Interactive Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Playfair+Display:wght@600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #060810;
+  --surface: #0f1118;
+  --surface2: #171a26;
+  --surface3: #1e2233;
+  --border: #262a3d;
+  --text: #e4e6f0;
+  --text-dim: #7a7f9d;
+  --wa-green: #25D366;
+  --wa-dark: #0b141a;
+  --wa-chat-bg: #0b141a;
+  --wa-incoming: #1f2c34;
+  --wa-outgoing: #005c4b;
+  --wa-header: #1f2c34;
+  --accent: #25D366;
+  --accent-soft: rgba(37,211,102,0.12);
+  --warn: #ff6b6b;
+  --gold: #fbbf24;
+  --blue: #60a5fa;
+  --purple: #a78bfa;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.app {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* ─── LEFT: NARRATIVE ─── */
+.narrative {
+  width: 42%;
+  min-width: 340px;
+  padding: 48px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 10% 90%, rgba(37,211,102,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 10%, rgba(96,165,250,0.03) 0%, transparent 50%),
+    var(--bg);
+}
+
+.narrative::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--border), transparent);
+}
+
+.step-indicator { display: flex; gap: 6px; margin-bottom: 40px; }
+
+.step-pip {
+  width: 32px; height: 4px; border-radius: 2px;
+  background: var(--border);
+  transition: all 0.5s ease;
+  cursor: pointer;
+}
+
+.step-pip.active { background: var(--accent); width: 48px; }
+.step-pip.done { background: rgba(37,211,102,0.4); }
+
+.narr-content { position: relative; min-height: 300px; }
+
+.narr-slide {
+  position: absolute; inset: 0;
+  opacity: 0; transform: translateY(24px);
+  transition: all 0.6s cubic-bezier(0.22,1,0.36,1);
+  pointer-events: none;
+}
+
+.narr-slide.active {
+  opacity: 1; transform: translateY(0); pointer-events: all;
+}
+
+.narr-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 20px; padding: 6px 14px;
+  background: var(--accent-soft); border-radius: 999px;
+}
+
+.narr-badge .pip {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.narr-slide h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(26px,3vw,38px);
+  line-height: 1.2; margin-bottom: 16px; color: #fff;
+}
+
+.narr-slide p {
+  color: var(--text-dim); font-size: 15px;
+  line-height: 1.7; max-width: 420px; margin-bottom: 12px;
+}
+
+.narr-stat {
+  display: inline-flex; align-items: baseline; gap: 8px;
+  margin-top: 16px; padding: 12px 20px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.narr-stat .num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 28px; font-weight: 600; color: var(--accent);
+}
+
+.narr-stat .label { font-size: 13px; color: var(--text-dim); }
+
+.narr-nav { display: flex; gap: 12px; margin-top: 40px; }
+
+.narr-btn {
+  padding: 12px 28px; border-radius: 999px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px;
+  font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+  border: 1px solid var(--border); background: var(--surface2); color: var(--text);
+}
+
+.narr-btn:hover { border-color: var(--accent); color: #fff; }
+
+.narr-btn.primary {
+  background: var(--accent); color: #000; border-color: var(--accent);
+}
+
+.narr-btn.primary:hover {
+  box-shadow: 0 8px 32px rgba(37,211,102,0.25);
+  transform: translateY(-1px);
+}
+
+.narr-btn:disabled {
+  opacity: 0.3; cursor: default;
+  transform: none !important; box-shadow: none !important;
+}
+
+/* ─── RIGHT: PHONE ─── */
+.phone-area {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  padding: 32px; position: relative;
+  background: radial-gradient(ellipse at 50% 50%, rgba(37,211,102,0.03) 0%, transparent 60%), var(--bg);
+}
+
+.phone {
+  width: 375px; max-width: 90%;
+  height: min(720px, 88vh);
+  background: var(--wa-dark);
+  border-radius: 40px; overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 25px 60px rgba(0,0,0,0.5), 0 0 120px rgba(37,211,102,0.04);
+  display: flex; flex-direction: column; position: relative;
+}
+
+.phone::before {
+  content: ''; position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  width: 120px; height: 28px;
+  background: #000; border-radius: 0 0 20px 20px; z-index: 10;
+}
+
+.wa-top {
+  background: var(--wa-header);
+  padding: 38px 16px 12px;
+  display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+}
+
+.wa-back { color: var(--accent); font-size: 20px; }
+
+.wa-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 700; flex-shrink: 0;
+}
+
+.wa-avatar.clinic { background: linear-gradient(135deg, var(--accent), #34d399); color: #000; }
+.wa-avatar.patient { background: linear-gradient(135deg, var(--blue), var(--purple)); color: #fff; }
+
+.wa-hdr-info { flex: 1; }
+.wa-hdr-name { font-size: 15px; font-weight: 600; color: #e9edef; }
+.wa-hdr-status { font-size: 12px; color: #8696a0; }
+
+.wa-body {
+  flex: 1; overflow-y: auto; padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 4px;
+  background: var(--wa-chat-bg);
+  background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.015'%3E%3Cpath d='M0 0h40v40H0V0zm40 40h40v40H40V40z'/%3E%3C/g%3E%3C/svg%3E");
+  scroll-behavior: smooth;
+}
+
+.wa-body::-webkit-scrollbar { width: 4px; }
+.wa-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+.wa-day { text-align: center; margin: 8px 0; }
+
+.wa-day span {
+  display: inline-block; background: #1a2530;
+  color: #8696a0; font-size: 11px; padding: 5px 14px; border-radius: 8px;
+}
+
+.bubble {
+  max-width: 82%; padding: 8px 12px; border-radius: 10px;
+  font-size: 13.5px; line-height: 1.5; position: relative;
+  word-wrap: break-word;
+  opacity: 0; transform: translateY(12px) scale(0.96);
+  transition: all 0.4s cubic-bezier(0.22,1,0.36,1);
+}
+
+.bubble.show { opacity: 1; transform: translateY(0) scale(1); }
+
+.bubble.in {
+  background: var(--wa-incoming); color: #e9edef;
+  align-self: flex-start; border-top-left-radius: 3px;
+}
+
+.bubble.out {
+  background: var(--wa-outgoing); color: #e9edef;
+  align-self: flex-end; border-top-right-radius: 3px;
+}
+
+.bubble .meta {
+  display: flex; justify-content: flex-end;
+  align-items: center; gap: 4px; margin-top: 3px;
+}
+
+.bubble .time { font-size: 10.5px; color: rgba(255,255,255,0.45); }
+.bubble .ticks { font-size: 12px; color: #53bdeb; }
+
+.typing-indicator {
+  align-self: flex-start; background: var(--wa-incoming);
+  padding: 12px 18px; border-radius: 10px; border-top-left-radius: 3px;
+  display: none; gap: 5px; align-items: center;
+}
+
+.typing-indicator.show { display: flex; }
+
+.typing-indicator.out-typing {
+  align-self: flex-end;
+  background: var(--wa-outgoing);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 3px;
+}
+
+.typing-indicator .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #8696a0; animation: bounce 1.4s infinite;
+}
+
+.typing-indicator .dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator .dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes bounce {
+  0%,60%,100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-5px); opacity: 1; }
+}
+
+.patient-card {
+  background: rgba(37,211,102,0.06);
+  border: 1px solid rgba(37,211,102,0.15);
+  border-radius: 8px; padding: 10px 12px; margin: 6px 0;
+}
+
+.patient-card .pc-name { font-weight: 600; color: var(--accent); font-size: 14px; }
+.patient-card .pc-detail { font-size: 12px; color: #8696a0; margin-top: 2px; }
+.patient-card .pc-revenue { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gold); margin-top: 4px; }
+
+.appt-card {
+  background: rgba(37,211,102,0.1);
+  border: 1px solid rgba(37,211,102,0.25);
+  border-radius: 10px; padding: 14px; text-align: center; margin: 4px 0;
+}
+
+.appt-card .check { font-size: 32px; margin-bottom: 6px; }
+.appt-card .title { font-weight: 700; font-size: 15px; color: var(--accent); }
+.appt-card .detail { font-size: 13px; color: #8696a0; margin-top: 4px; line-height: 1.5; }
+
+.quick-replies { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+
+.qr-btn {
+  background: transparent; border: 1px solid rgba(37,211,102,0.4);
+  color: var(--accent); font-size: 12px; padding: 6px 14px;
+  border-radius: 999px; font-family: 'DM Sans', sans-serif;
+}
+
+.wa-bottom {
+  background: var(--wa-header); padding: 8px 10px;
+  display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+}
+
+.wa-input {
+  flex: 1; background: #2a3942; border: none; border-radius: 24px;
+  padding: 10px 16px; font-size: 14px; color: #e9edef;
+  font-family: 'DM Sans', sans-serif; outline: none;
+}
+
+.wa-send {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--accent); border: none; color: #fff; font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ─── SUCCESS OVERLAY ─── */
+.success-overlay {
+  position: absolute; inset: 0;
+  background: rgba(6,8,16,0.94);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.6s ease; z-index: 50;
+  border-radius: 40px;
+}
+
+.success-overlay.show { opacity: 1; pointer-events: all; }
+
+.success-overlay .big-check {
+  font-size: 64px;
+  animation: popIn 0.5s cubic-bezier(0.22,1,0.36,1);
+}
+
+@keyframes popIn {
+  0% { transform: scale(0); }
+  80% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.success-overlay h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; margin-top: 12px; color: #fff;
+}
+
+.success-overlay p {
+  color: var(--text-dim); font-size: 14px;
+  margin-top: 8px; text-align: center;
+  max-width: 260px; line-height: 1.6;
+}
+
+.revenue-recovered {
+  margin-top: 20px; padding: 12px 24px;
+  background: var(--accent-soft);
+  border: 1px solid rgba(37,211,102,0.25);
+  border-radius: 12px; text-align: center;
+}
+
+.revenue-recovered .amount {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 28px; font-weight: 600; color: var(--accent);
+}
+
+.revenue-recovered .label { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 800px) {
+  .app { flex-direction: column; }
+  .narrative { width: 100%; min-width: unset; padding: 20px 20px 12px; }
+  .narrative::after { display: none; }
+  .narr-content { min-height: auto; position: relative; }
+  .narr-slide { position: relative; display: none; }
+  .narr-slide.active { display: block; }
+  .phone-area { padding: 0 12px 12px; flex: 1; }
+  .phone { height: 100%; max-height: 480px; border-radius: 28px; }
+  .phone::before { height: 22px; width: 90px; }
+  .narr-nav { margin-top: 16px; }
+  .narr-stat .num { font-size: 22px; }
+  .success-overlay { border-radius: 28px; }
+  .step-indicator { margin-bottom: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ═══ LEFT: NARRATIVE ═══ -->
+  <div class="narrative">
+    <div class="step-indicator" id="stepPips"></div>
+
+    <div class="narr-content">
+
+      <div class="narr-slide active" data-step="0">
+        <div class="narr-badge"><span class="pip"></span> Step 1 of 6</div>
+        <h2>Monday Morning,<br>9:00 AM</h2>
+        <p>The AI scans all patient records overnight. By the time Dr. Sharma checks WhatsApp, a prioritised follow-up list is waiting — patients ranked by how long they've been gone and revenue at risk.</p>
+        <div class="narr-stat">
+          <span class="num">₹18,400</span>
+          <span class="label">recoverable this week</span>
+        </div>
+      </div>
+
+      <div class="narr-slide" data-step="1">
+        <div class="narr-badge"><span class="pip"></span> Step 2 of 6</div>
+        <h2>Receptionist Sends<br>Follow-Up</h2>
+        <p>The receptionist picks the top-priority patient — Priya Mehta, root canal 8 months ago, never came back. She taps the AI-drafted message and sends it. Warm, personal, not pushy.</p>
+        <div class="narr-stat">
+          <span class="num">8 months</span>
+          <span class="label">since Priya's last visit</span>
+        </div>
+      </div>
+
+      <div class="narr-slide" data-step="2">
+        <div class="narr-badge"><span class="pip"></span> Step 3 of 6</div>
+        <h2>Patient Responds<br>With Questions</h2>
+        <p>Priya replies — but she's not ready to book yet. She has concerns: "Will it hurt?" "How much will it cost?" These are the questions that used to go unanswered for days.</p>
+        <div class="narr-stat">
+          <span class="num">73%</span>
+          <span class="label">of patients reply within 2 hrs</span>
+        </div>
+      </div>
+
+      <div class="narr-slide" data-step="3">
+        <div class="narr-badge"><span class="pip"></span> Step 4 of 6</div>
+        <h2>Instant, Accurate<br>Answers</h2>
+        <p>The AI drafts clear, reassuring answers based on the clinic's actual procedures and pricing. The receptionist reviews and sends in seconds — no guessing, no waiting for the doctor.</p>
+        <p style="color: var(--accent); font-size: 13px; font-weight: 500;">Every answer is reviewed by staff before sending.</p>
+      </div>
+
+      <div class="narr-slide" data-step="4">
+        <div class="narr-badge"><span class="pip"></span> Step 5 of 6</div>
+        <h2>Appointment<br>Booked</h2>
+        <p>Questions answered. Concerns resolved. Priya picks a time slot. Appointment confirmed — right inside WhatsApp. No app download, no portal, no phone tag.</p>
+        <div class="narr-stat">
+          <span class="num">4 min</span>
+          <span class="label">first message → booking</span>
+        </div>
+      </div>
+
+      <div class="narr-slide" data-step="5">
+        <div class="narr-badge"><span class="pip"></span> Step 6 of 6</div>
+        <h2>Revenue Recovered.<br>Patient Retained.</h2>
+        <p>One patient back. ₹4,500 recovered. And there are 6 more names on this week's list. This plays out every single Monday — automatically.</p>
+        <div class="narr-stat">
+          <span class="num">60x</span>
+          <span class="label">ROI at ₹499/month</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="narr-nav">
+      <button class="narr-btn" id="prevBtn">← Back</button>
+      <button class="narr-btn primary" id="nextBtn">Next →</button>
+    </div>
+  </div>
+
+  <!-- ═══ RIGHT: PHONE ═══ -->
+  <div class="phone-area">
+    <div class="phone" id="phone">
+
+      <div class="wa-top">
+        <span class="wa-back">‹</span>
+        <div class="wa-avatar clinic" id="waAvatar">DF</div>
+        <div class="wa-hdr-info">
+          <div class="wa-hdr-name" id="waName">Wapas Health</div>
+          <div class="wa-hdr-status" id="waStatus">online</div>
+        </div>
+      </div>
+
+      <div class="wa-body" id="waBody"></div>
+
+      <div class="wa-bottom">
+        <input class="wa-input" placeholder="Type a message" readonly>
+        <button class="wa-send">➤</button>
+      </div>
+
+      <div class="success-overlay" id="successOverlay">
+        <div class="big-check">✅</div>
+        <h3>Patient Recovered</h3>
+        <p>Priya Mehta is coming back. One message. One conversation. One booking.</p>
+        <div class="revenue-recovered">
+          <div class="amount">+ ₹4,500</div>
+          <div class="label">revenue recovered</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+const STEPS = [
+  // 0: Monday list
+  {
+    header: { cls: 'clinic', initials: 'DF', name: 'Wapas Health', status: 'online' },
+    clear: true,
+    messages: [
+      { side: 'day', text: 'MONDAY' },
+      { side: 'in', delay: 300, time: '9:00 AM', html: `<div style="font-weight:600;margin-bottom:6px">📋 Weekly Follow-Up List</div><div style="font-size:12px;color:#8696a0">Dr. Sharma's Dental Clinic · Mon 9 AM</div>` },
+      { side: 'in', delay: 900, time: '9:00 AM', html: `
+        <div class="patient-card"><div class="pc-name">1. Priya Mehta</div><div class="pc-detail">Root canal · 8 months ago · No return</div><div class="pc-revenue">Est. revenue: ₹4,500</div></div>
+        <div class="patient-card"><div class="pc-name">2. Rajan Kumar</div><div class="pc-detail">Cleaning due · 7 months overdue</div><div class="pc-revenue">Est. revenue: ₹1,200</div></div>
+        <div class="patient-card"><div class="pc-name">3. Anita Joshi</div><div class="pc-detail">Missed appt · 12 days ago</div><div class="pc-revenue">Needs rescheduling</div></div>
+        <div class="patient-card"><div class="pc-name">4. Vikram Shah</div><div class="pc-detail">Ortho adjustment · 3 wks overdue</div><div class="pc-revenue">Treatment continuity risk</div></div>` },
+      { side: 'in', delay: 1800, time: '9:00 AM', html: `<div style="text-align:center;padding:8px 0"><div style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:#25D366">₹18,400</div><div style="font-size:12px;color:#8696a0;margin-top:2px">total recoverable this week</div></div><div style="font-size:12px;color:#8696a0;margin-top:6px">💡 Tap a patient to send AI-drafted follow-up</div>` },
+    ]
+  },
+  // 1: Clinic sends to Priya
+  {
+    header: { cls: 'patient', initials: 'PM', name: 'Priya Mehta', status: 'last seen today at 8:42 AM' },
+    clear: true,
+    messages: [
+      { side: 'day', text: 'MONDAY' },
+      { side: 'out', delay: 300, time: '9:05 AM', html: `Hi Priya! 😊 This is Sneha from Dr. Sharma's clinic. It's been a while since your root canal treatment in July. Dr. Sharma wanted to check — is everything feeling okay with that tooth?` },
+      { side: 'out', delay: 1200, time: '9:05 AM', html: `We'd love to see you for a quick follow-up to make sure everything healed perfectly. We have slots this week if you're free!` },
+      { side: 'out', delay: 1900, time: '9:05 AM', html: `<div class="quick-replies"><span class="qr-btn">📅 Book appointment</span><span class="qr-btn">💬 Ask a question</span></div>` },
+    ]
+  },
+  // 2: Priya replies with questions
+  {
+    header: { cls: 'patient', initials: 'PM', name: 'Priya Mehta', status: 'online' },
+    clear: false,
+    messages: [
+      { side: 'in', delay: 600, time: '9:12 AM', html: `Hi Sneha! Thanks for checking in 🙂` },
+      { side: 'in', delay: 1400, time: '9:12 AM', html: `Actually the tooth has been a little sensitive sometimes. I was meaning to call but kept putting it off 😅` },
+      { side: 'in', delay: 2200, time: '9:13 AM', html: `Quick questions — will the checkup be painful? And how much will it cost roughly?` },
+    ]
+  },
+  // 3: AI-drafted answers sent by receptionist
+  {
+    header: { cls: 'patient', initials: 'PM', name: 'Priya Mehta', status: 'online' },
+    clear: false,
+    messages: [
+      { side: 'out', delay: 500, time: '9:14 AM', html: `Not at all, Priya! The sensitivity you're feeling is actually a sign the tooth is ready for the next step — your crown placement. Dr. Sharma will examine the tooth and fit the permanent crown. The procedure itself is comfortable! 😊` },
+      { side: 'out', delay: 1500, time: '9:14 AM', html: `Cost: ₹4,500 for the permanent crown — this was always the planned final step of your root canal treatment. It protects the tooth and stops that sensitivity completely.` },
+      { side: 'out', delay: 2500, time: '9:15 AM', html: `That sensitivity you mentioned is actually normal for a tooth awaiting its crown — the sooner we place it, the better protected you'll be. Dr. Sharma has your case notes ready! 💪` },
+    ]
+  },
+  // 4: Booking conversation
+  {
+    header: { cls: 'patient', initials: 'PM', name: 'Priya Mehta', status: 'online' },
+    clear: false,
+    messages: [
+      { side: 'in', delay: 500, time: '9:16 AM', html: `Oh makes sense, I didn't realise the crown was the next step! Yes let's do it 👍 What slots do you have this week?` },
+      { side: 'out', delay: 1400, time: '9:17 AM', html: `Here are available slots:<br><br>📅 <b>Wed, 19 Mar</b> — 10:30 AM, 3:00 PM<br>📅 <b>Thu, 20 Mar</b> — 11:00 AM, 4:30 PM<br>📅 <b>Sat, 22 Mar</b> — 10:00 AM` },
+      { side: 'in', delay: 2400, time: '9:18 AM', html: `Thursday 11 AM works perfectly!` },
+      { side: 'out', delay: 3400, time: '9:18 AM', html: `<div class="appt-card"><div class="check">✅</div><div class="title">Appointment Confirmed</div><div class="detail"><b>Dr. Sharma's Dental Clinic</b><br>Thu, 20 Mar · 11:00 AM<br>Permanent Crown Placement<br>Est. cost: ₹4,500</div></div>` },
+      { side: 'out', delay: 4400, time: '9:19 AM', html: `You're all set, Priya! We'll send a reminder Wednesday evening. See you Thursday! 🦷✨` },
+      { side: 'in', delay: 5200, time: '9:20 AM', html: `Thank you so much Sneha! See you then 😊🙏` },
+    ]
+  },
+  // 5: Success overlay
+  { showOverlay: true }
+];
+
+let cur = 0;
+let busy = false;
+let cancelToken = 0; // increment to cancel any running animation
+const total = STEPS.length;
+const waBody = document.getElementById('waBody');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+// Build pips
+const pipsEl = document.getElementById('stepPips');
+for (let i = 0; i < total; i++) {
+  const p = document.createElement('div');
+  p.className = 'step-pip' + (i === 0 ? ' active' : '');
+  p.onclick = () => { if (!busy) go(i); };
+  pipsEl.appendChild(p);
+}
+
+function updateHeader(h) {
+  if (!h) return;
+  document.getElementById('waAvatar').className = 'wa-avatar ' + h.cls;
+  document.getElementById('waAvatar').textContent = h.initials;
+  document.getElementById('waName').textContent = h.name;
+  document.getElementById('waStatus').textContent = h.status;
+}
+
+function makeBubble(msg) {
+  if (msg.side === 'day') {
+    const d = document.createElement('div');
+    d.className = 'wa-day';
+    d.innerHTML = `<span>${msg.text}</span>`;
+    return d;
+  }
+  const b = document.createElement('div');
+  const isOut = msg.side === 'out';
+  b.className = `bubble ${isOut ? 'out' : 'in'}`;
+  b.innerHTML = msg.html +
+    `<div class="meta"><span class="time">${msg.time || ''}</span>${isOut ? '<span class="ticks">✓✓</span>' : ''}</div>`;
+  return b;
+}
+
+function showTyping(side) {
+  const t = document.createElement('div');
+  t.className = 'typing-indicator show' + (side === 'out' ? ' out-typing' : '');
+  t.innerHTML = '<div class="dot"></div><div class="dot"></div><div class="dot"></div>';
+  waBody.appendChild(t);
+  waBody.scrollTop = waBody.scrollHeight;
+  return t;
+}
+
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+// Render all messages for steps 0..n instantly (no animation), used for back navigation
+function rebuildInstant(n) {
+  waBody.innerHTML = '';
+  let lastHeader = null;
+  for (let i = 0; i <= n; i++) {
+    const step = STEPS[i];
+    if (step.showOverlay) break;
+    if (step.header) lastHeader = step.header;
+    if (step.clear) waBody.innerHTML = '';
+    if (step.messages) {
+      for (const msg of step.messages) {
+        const el = makeBubble(msg);
+        if (msg.side !== 'day') el.classList.add('show');
+        waBody.appendChild(el);
+      }
+    }
+  }
+  if (lastHeader) updateHeader(lastHeader);
+  waBody.scrollTop = waBody.scrollHeight;
+}
+
+async function go(n) {
+  if (n < 0 || n >= total) return;
+
+  // Cancel any running animation
+  cancelToken++;
+  const myToken = cancelToken;
+  busy = false;
+  cur = n;
+
+  const step = STEPS[n];
+
+  // Pips
+  document.querySelectorAll('.step-pip').forEach((p, i) => {
+    p.className = 'step-pip' + (i === n ? ' active' : i < n ? ' done' : '');
+  });
+
+  // Narrative
+  document.querySelectorAll('.narr-slide').forEach(s => s.classList.remove('active'));
+  document.querySelector(`[data-step="${n}"]`).classList.add('active');
+
+  // Buttons
+  prevBtn.disabled = n === 0;
+  nextBtn.textContent = n === total - 1 ? '↻ Replay' : 'Next →';
+
+  // Overlay
+  document.getElementById('successOverlay').classList.remove('show');
+
+  if (step.showOverlay) {
+    // Rebuild chat state instantly before showing overlay
+    rebuildInstant(n - 1);
+    await wait(400);
+    if (cancelToken !== myToken) return;
+    document.getElementById('successOverlay').classList.add('show');
+    return;
+  }
+
+  // For back navigation or step 0: rebuild everything instantly
+  if (step.clear) {
+    waBody.innerHTML = '';
+    if (step.header) updateHeader(step.header);
+  } else {
+    // This step appends — rebuild all prior steps instantly first
+    rebuildInstant(n - 1);
+    if (step.header) updateHeader(step.header);
+  }
+
+  // Animate messages for current step
+  busy = true;
+  if (step.messages) {
+    for (const msg of step.messages) {
+      if (cancelToken !== myToken) { busy = false; return; }
+
+      if (msg.side === 'day') {
+        const el = makeBubble(msg);
+        waBody.appendChild(el);
+        continue;
+      }
+
+      await wait(Math.max((msg.delay || 300) - 450, 80));
+      if (cancelToken !== myToken) { busy = false; return; }
+
+      const typing = showTyping(msg.side);
+      await wait(450 + Math.random() * 250);
+      if (cancelToken !== myToken) { typing.remove(); busy = false; return; }
+      typing.remove();
+
+      const el = makeBubble(msg);
+      waBody.appendChild(el);
+      await wait(30);
+      el.classList.add('show');
+      waBody.scrollTop = waBody.scrollHeight;
+    }
+  }
+
+  busy = false;
+}
+
+prevBtn.onclick = () => { if (cur > 0) go(cur - 1); };
+nextBtn.onclick = () => {
+  if (cur < total - 1) go(cur + 1);
+  else go(0);
+};
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextBtn.click(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); prevBtn.click(); }
+});
+
+go(0);
+</script>
+
+</body>
+</html>
