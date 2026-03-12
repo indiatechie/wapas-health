@@ -223,10 +223,39 @@
     .reveal-d3 { transition-delay: 0.3s; }
     .reveal-d4 { transition-delay: 0.4s; }
 
+    /* HAMBURGER */
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      background: none; border: none; cursor: pointer; padding: 6px; flex-shrink: 0;
+    }
+    .hamburger span { width: 22px; height: 2px; background: var(--ink); border-radius: 2px; transition: all 0.3s; display: block; }
+    .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .nav-mobile-menu {
+      display: none; position: fixed; top: 64px; left: 0; right: 0; z-index: 199;
+      background: rgba(250,252,251,0.98); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      flex-direction: column; padding: 8px 24px 20px;
+    }
+    .nav-mobile-menu.open { display: flex; }
+    .nav-mobile-menu a {
+      font-size: 16px; font-weight: 500; color: var(--ink-mid);
+      text-decoration: none; padding: 14px 0;
+      border-bottom: 1px solid var(--border); transition: color 0.2s;
+    }
+    .nav-mobile-menu a:last-child { border-bottom: none; }
+    .nav-mobile-menu .nav-cta {
+      margin-top: 12px; text-align: center; border: none; border-radius: 8px;
+      padding: 14px; font-size: 15px;
+    }
+
     /* RESPONSIVE */
     @media (max-width: 960px) {
       nav { padding: 0 24px; }
+      .hamburger { display: flex; }
       .nav-links a:not(.nav-cta) { display: none; }
+      .nav-links .nav-cta { display: none; }
       section { padding: 64px 24px; }
       .hero { padding: 88px 24px 48px; }
       .hero h1 { font-size: clamp(40px, 10vw, 64px); }
@@ -252,7 +281,7 @@
 
 <!-- NAV -->
 <nav>
-  <a href="#" class="nav-logo"><img src="Wapas_Logo.png" alt="Wapas.Health" style="height:36px;width:auto;" /></a>
+  <a href="#" class="nav-logo"><img src="Wapas_Logo.png" alt="Wapas.Health" style="height:44px;width:auto;" /></a>
   <div class="nav-links">
     <a href="#problem">Problem</a>
     <a href="#how">How It Works</a>
@@ -260,7 +289,17 @@
     <a href="#trust">Privacy</a>
     <a href="#cta" class="nav-cta">Request Early Access</a>
   </div>
+  <button class="hamburger" id="hamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+<div class="nav-mobile-menu" id="mobileMenu">
+  <a href="#problem" onclick="closeMobileMenu()">Problem</a>
+  <a href="#how" onclick="closeMobileMenu()">How It Works</a>
+  <a href="#demo" onclick="closeMobileMenu()">Demo</a>
+  <a href="#trust" onclick="closeMobileMenu()">Privacy</a>
+  <a href="#cta" class="nav-cta" onclick="closeMobileMenu()">Request Early Access</a>
+</div>
 
 <!-- HERO -->
 <section class="hero" id="home">
@@ -268,7 +307,7 @@
   <div class="hero-glow"></div>
   <div class="hero-glow2"></div>
   <div class="hero-inner">
-    <div class="hero-badge"><span></span> Now in early access &nbsp;·&nbsp; Bangalore, India</div>
+    <div class="hero-badge"><span></span> 5 clinics already piloting &nbsp;·&nbsp; Bangalore, India</div>
     <h1>AI that brings<br><em>patients back</em><br>to your clinic</h1>
     <p class="hero-sub">Every dental clinic loses patients silently — not because of bad experiences, but because no one followed up. Wapas detects who should have come back but didn't, and delivers a prioritised WhatsApp action list every Monday morning.</p>
     <div class="hero-actions">
@@ -370,7 +409,7 @@
   <div class="demo-header">
     <div class="section-label reveal">Live Demo</div>
     <h2 class="section-title reveal">See Wapas in action</h2>
-    <p class="section-sub reveal">Watch a full follow-up flow — from Monday morning list to confirmed appointment. Use the arrows or press Space to step through.</p>
+    <p class="section-sub reveal">Watch a full follow-up flow — from Monday morning list to confirmed appointment. Tap the arrows to step through, or press Space on desktop.</p>
   </div>
   <div class="demo-wrap reveal">
     <iframe src="demo.html" title="Wapas Interactive Demo" loading="lazy"></iframe>
@@ -455,9 +494,9 @@
       <div class="v-card reveal reveal-d1"><div class="v-num">2.5L</div><div class="v-label">dental clinics in India. 70,000 are independent, urban, and reachable today.</div></div>
       <div class="v-card reveal reveal-d2"><div class="v-num">₹84Cr</div><div class="v-label">ARR potential from dental alone at 6% adoption — before expansion to other verticals.</div></div>
       <div class="v-card reveal reveal-d3"><div class="v-num">₹0</div><div class="v-label">new data entry required. Works with whatever clinic software or Excel records you already have.</div></div>
-      <div class="v-fintech reveal reveal-d4">
-        <h4>The Fintech Layer</h4>
-        <p>At 3,000+ clinics, Wapas becomes a lending platform — offering working capital to clinic owners against their predictable, Wapas-verified monthly recovery revenue. The BharatPe playbook, applied to healthcare.</p>
+      <div class="v-card reveal reveal-d4" style="background:var(--ink);border-color:#1e2a24;">
+        <div class="v-num" style="font-size:36px;color:#3d9162;">WhatsApp-native</div>
+        <div class="v-label" style="color:#6b7a72;">No app for your patients to download. No portal to log in to. Booking happens inside the conversation they're already in.</div>
       </div>
     </div>
   </div>
@@ -469,20 +508,20 @@
     <div class="section-label">Early Access</div>
     <h2 class="cta-title">Start recovering your patients this Monday</h2>
     <p class="cta-sub">We're onboarding a small number of dental clinics in Bangalore for our early access programme. No commitment, no complex setup — just results.</p>
-    <form class="cta-form" onsubmit="handleSubmit(event)">
+    <form class="cta-form" id="ctaForm">
       <input class="cta-input" type="text" placeholder="Your name" required />
       <input class="cta-input" type="text" placeholder="Clinic name" required />
       <input class="cta-input" type="tel" placeholder="WhatsApp number" required />
       <input class="cta-input" type="email" placeholder="Email address" required />
       <button class="cta-btn" type="submit" id="submitBtn">Request Early Access →</button>
     </form>
-    <p class="cta-note">We'll reach out on WhatsApp within 24 hours. No spam, ever.</p>
+    <p class="cta-note">Free during early access — no credit card, no commitment. We'll reach out on WhatsApp within 24 hours.</p>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <a href="#" class="footer-logo"><img src="Wapas_Logo.png" alt="Wapas.Health" style="height:32px;width:auto;opacity:0.85;" /></a>
+  <a href="#" class="footer-logo"><img src="Wapas_Logo.png" alt="Wapas.Health" style="height:40px;width:auto;opacity:0.85;" /></a>
   <div class="footer-links">
     <a href="#problem">Problem</a>
     <a href="#how">How it works</a>
@@ -490,7 +529,7 @@
     <a href="#trust">Privacy</a>
     <a href="#vision">Vision</a>
   </div>
-  <div class="footer-copy">© 2025 Wapas Health &nbsp;·&nbsp; Bangalore, India</div>
+  <div class="footer-copy">© 2026 Wapas Health &nbsp;·&nbsp; Bangalore, India</div>
 </footer>
 
 <script>
@@ -500,14 +539,42 @@
   }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-  // Form submit
-  function handleSubmit(e) {
+  // Form submit — Formspree
+  document.getElementById('ctaForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
-    btn.textContent = '✓ Request received — we\'ll be in touch on WhatsApp!';
-    btn.style.background = '#d4ede0';
-    btn.style.color = '#1a4a2e';
+    btn.textContent = 'Sending...';
     btn.disabled = true;
+    try {
+      const res = await fetch('https://formspree.io/f/REPLACE_WITH_YOUR_FORM_ID', {
+        method: 'POST',
+        body: new FormData(this),
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        btn.textContent = '✓ Request received — we\'ll be in touch on WhatsApp!';
+        btn.style.background = '#d4ede0';
+        btn.style.color = '#1a4a2e';
+      } else {
+        btn.textContent = 'Something went wrong — please try again.';
+        btn.disabled = false;
+      }
+    } catch {
+      btn.textContent = 'Something went wrong — please try again.';
+      btn.disabled = false;
+    }
+  });
+
+  // Hamburger menu
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+  });
+  function closeMobileMenu() {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
   }
 
   // Smooth scroll
